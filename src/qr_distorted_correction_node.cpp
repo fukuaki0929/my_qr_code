@@ -4,8 +4,13 @@ int main(int argc,char** argv)
 {
     ros::init(argc,argv,"qr_distorted_correction");
 
-    QR_distorted_correction qr(1);
-    
+    float epsilon = 10.0f;
+    if(argc >0){
+        if(atof(argv[0]) > 0)
+            epsilon = atof(argv[0]);
+    }
+
+    QR_distorted_correction qr(epsilon);
     ros::spin();
     return 0;
 }
@@ -21,23 +26,23 @@ void QR_distorted_correction::callback_image(const sensor_msgs::ImageConstPtr& _
 
     imageCopy = image.clone();
 
-    monoImage = makeMonoImage(_image_msg);
-    contours = findContours(monoImage);
+    monoImage_rev = makeMonoImage_rev(_image_msg);
+    contours = findContours(monoImage_rev);
 
     distortedCorrection(contours);
 
-    cv::imshow("image",monoImage);
+    cv::imshow("image",imageCopy);
 
     cv::waitKey(1);
 }
 
-cv::Mat QR_distorted_correction::makeMonoImage(const sensor_msgs::ImageConstPtr& _image_msg){
+cv::Mat QR_distorted_correction::makeMonoImage_rev(const sensor_msgs::ImageConstPtr& _image_msg){
     cv::Mat _greyImage;
     cv::Mat _returnMonoImage;
     _greyImage = cv_bridge::toCvCopy(_image_msg,sensor_msgs::image_encodings::MONO8)->image;
     cv::threshold(_greyImage,_returnMonoImage,0,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
 
-    return _returnMonoImage;
+    return ~_returnMonoImage;
 }
 
 PointArray2 QR_distorted_correction::findContours(const cv::Mat& _monoImage){
@@ -55,12 +60,12 @@ void QR_distorted_correction::distortedCorrection(const PointArray2& _edgesArray
         //四角形のみを対象とする
         if(_normalizedEdges.size() == 4){
             cv::Rect _rect = cv::boundingRect(_normalizedEdges);
-            cv::rectangle(monoImage,_rect,cv::Scalar(255,255,0),2,8,0);
+            cv::rectangle(imageCopy,_rect,cv::Scalar(255,255,0),2,8,0);
         }
     }
 }
 
-QR_distorted_correction::QR_distorted_correction(int _epsilon)
+QR_distorted_correction::QR_distorted_correction(float _epsilon)
     :epsilon(_epsilon)
     {
     ros::NodeHandle nh;
