@@ -13,13 +13,13 @@ class QR_distorted_correction{
 private:
     cv::Mat image;
     cv::Mat imageCopy;
-    cv::Mat monoImage; 
+    cv::Mat monoImage_rev; 
     PointArray2 contours;
 
     const float epsilon;
 
     void callback_image(const sensor_msgs::ImageConstPtr& _image_msg);
-    cv::Mat makeMonoImage(const sensor_msgs::ImageConstPtr& _image_msg);
+    cv::Mat makeMonoImage_rev(const sensor_msgs::ImageConstPtr& _image_msg);
     PointArray2 findContours(const cv::Mat& _monoImage);
     void distortedCorrection(const PointArray2& _edgesArray2);
 
@@ -27,5 +27,5 @@ private:
 
 public:
     QR_distorted_correction();
-    QR_distorted_correction(int _epsilon);
+    QR_distorted_correction(float _epsilon);
 };
