@@ -1,0 +1,6 @@
+<launch>
+  <arg name="rvizconfig" default="$(find qr_code)/rviz/marker1.rviz" />
+
+  <node name="qr_position" pkg="qr_code" type="qr_position" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+</launch>

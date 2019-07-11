@@ -1,0 +1,10 @@
+std_msgs/Header header
+float64 location_x_0
+float64 location_y_0
+float64 location_x_1
+float64 location_y_1
+float64 location_x_2
+float64 location_y_2
+float64 location_x_3
+float64 location_y_3
+sensor_msgs/Image camera_depth
