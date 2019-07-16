@@ -7,14 +7,20 @@
 #include <zbar.h>
 #include <sensor_msgs/image_encodings.h>
 
+//参考サイト
+//http://mtail3x.wpblog.jp/2015/11/06/opencvsharp%E3%81%A7%E5%8F%B0%E5%BD%A2%E8%A3%9C%E6%AD%A3/
+//http://nn-hokuson.hatenablog.com/entry/2017/05/31/210808
 using PointArray2 = std::vector<std::vector<cv::Point>>;
 
 class QR_distorted_correction{
 private:
     cv::Mat image;
-    cv::Mat imageCopy;
+    cv::Mat dstImage;
     cv::Mat monoImage_rev; 
+    cv::Mat dst;
     PointArray2 contours;
+
+    const zbar::ImageScanner scanner;
 
     const float epsilon;
 
@@ -22,7 +28,7 @@ private:
     cv::Mat makeMonoImage_rev(const sensor_msgs::ImageConstPtr& _image_msg);
     PointArray2 findContours(const cv::Mat& _monoImage);
     void distortedCorrection(const PointArray2& _edgesArray2);
-
+    std::string readQR(const cv::Mat& _dstImage);
     image_transport::Subscriber image_sub;
 
 public:
